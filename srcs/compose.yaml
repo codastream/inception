@@ -1,5 +1,7 @@
 services:
-	db:
+    nginx:
+        image:
+	mariadb:
 		image: mariadb
 		environment:
 			SQL_DATABASE:		${SQL_DATABASE}
