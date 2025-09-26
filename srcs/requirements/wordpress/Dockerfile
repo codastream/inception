@@ -15,20 +15,24 @@ RUN apk add --no-cache php84 \
   php84-opcache \
   php84-pdo \
   php84-pdo_mysql \
-  # php84-json \
-  # php-mbstring \
+  php84-json \
+  php-mbstring \
   php84-curl \
   php84-gd \
   php84-zip \
   curl \
   mariadb-client
 
-RUN mkdir -p /usr/local/bin/wp \
-  && wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -P /usr/local/bin/wp \
-  && chmod +x /usr/local/bin/wp/wp-cli.phar
-
 COPY tools/setup.sh /setup.sh
 
-ENTRYPOINT /setup.sh
+RUN mkdir -p /usr/local/bin/wp \
+  && wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -P /usr/local/bin/wp \
+  && chmod +x /usr/local/bin/wp \
+  && mkdir -p /run/php \
+  && chmod +x /setup.sh
 
-CMD ["/usr/sbin/php-fpm8.4", "-F;"]
+
+ENTRYPOINT ["/setup.sh"]
+
+# -F foreground
+CMD ["/usr/sbin/php-fpm8.4", "-F"]

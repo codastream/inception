@@ -26,9 +26,7 @@ VOLUME /var/lib/mysql
 
 EXPOSE 3306
 
-#USER mysql
-
 ENTRYPOINT ["/setup.sh"]
 
-CMD ["mariadb_safe"]
+CMD ["mariadbd-safe", "-F"]
 

@@ -10,26 +10,26 @@ SQL_ROOT_PASSWORD=$(cat /run/secrets/sql_root_password)
 set -euo pipefail
 
 # start in background
-mariadb_safe --skip-networking --user=mysql &
+mariadbd-safe --skip-networking --user=mysql
 
 # wait
-# until mysqladmin ping >/dev/null 2>&1; do
-#   echo "Waiting for MariaDB to start..."
-#   sleep 2
-# done
+until mysqladmin ping >/dev/null 2>&1; do
+   echo "Waiting for MariaDB to start..."
+   sleep 2
+done
 
 # create DB
 mariadb -uroot <<-EOSQL
   CREATE DATABASE IF NOT EXISTS \`${SQL_DATABASE}\` CHARACTER SET utf8 COLLATE utf8_general_ci;
-  CREATE USER IF NOT EXISTS \`${SQL_ADMIN}\`@'localhost' IDENTIFIED BY ${SQL_ADMIN_PASSWORD};
-  CREATE USER IF NOT EXISTS \`${SQL_USER}\`@'localhost' IDENTIFIED BY ${SQL_USER_PASSWORD};
+  CREATE USER IF NOT EXISTS \`${SQL_ADMIN}\`@'localhost' IDENTIFIED BY '${SQL_ADMIN_PASSWORD}';
+  CREATE USER IF NOT EXISTS \`${SQL_USER}\`@'localhost' IDENTIFIED BY '${SQL_USER_PASSWORD}';
   GRANT ALL PRIVILEGES ON \`${SQL_DATABASE}\`.* TO \`${SQL_ADMIN}\`@'%' IDENTIFIED BY ${SQL_ADMIN_PASSWORD};
-  ALTER USER 'root'@'localhost' IDENTIFIED BY ${SQL_ROOT_PASSWORD};
+  ALTER USER 'root'@'localhost' IDENTIFIED BY '${SQL_ROOT_PASSWORD}';
   FLUSH PRIVILEGES;
 EOSQL
 
 # refresh
 mysqladmin -uroot -p'${SQL_ROOT_PASSWORD}' shutdown
 
-exec "$@"
+exec su-exec mysql "$@"
 

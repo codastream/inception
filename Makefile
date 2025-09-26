@@ -33,40 +33,40 @@ down:
 # clean project
 clean:
 	@echo "Cleaning Docker compose..."
-	@sudo docker compose -f $(COMPOSE_FILE) down -v --rmi all
+	@docker compose -f $(COMPOSE_FILE) down -v --rmi all
 
 # cleans containers, networks, images, volumes
 # also cleans build cache
 # -a to clean tagged images
 fclean: clean
 	@echo "Cleaning system from all docker (..."
-	@sudo docker system prune -af --volumes
+	@docker system prune -af --volumes
 	@echo "Cleaning data..."
-	sudo rm -rf $DATA
+	rm -rf $DATA
 	@echo "Cleaning done"
 
 re: fclean
 	@make
 
 status:
-	@sudo docker ps
+	@docker ps
 
 show:
-	sudo docker images
-	sudo docker volume ls
-	sudo docker network ls
+	docker images
+	docker volume ls
+	docker network ls
 
 logs:
 	docker compose -f $(COMPOSE_FILE) logs
 
 sh-nginx:
-	@sudo docker exec -it nginx sh
+	@docker exec -it nginx sh
 
 sh-maria:
-	@sudo docker exec -it mariadb sh
+	@docker exec -it mariadb sh
 
 sh-wp:
-	@sudo docker exec -it wordpress sh
+	@docker exec -it wordpress sh
 
 .PHONY: secrets rm-secrets directories up down stop start clean fclean re status show logs sh-nginx sh-maria sh-wp
 

@@ -1,12 +1,17 @@
 #!/bin/sh
 
-WP_ADMIN_PASSWORD = $(cat /run/secrets/wp_admin_password)
-WP_USER_PASSWORD = $(cat /run/secrets/wp_user_password)
-SQL_USER_PASSWORD = $(cat /run/secrets/sql_user_password)
+WP_ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
+WP_USER_PASSWORD=$(cat /run/secrets/wp_user_password)
+SQL_USER_PASSWORD=$(cat /run/secrets/sql_user_password)
 
 @echo "===Wordpress setup==="
 @echo "Downloading..."
 wp core download --path=/var/www/wordpress --allow-root
+
+until mariadb -h localhost -u"$SQL_USER" -p"$SQL_USER_PASSWORD" -e "SELECT 1" >/dev/null 2>&1; do
+    echo "[INFO] Waiting for MariaDB..."
+    sleep 2
+done
 
 @echo "Configuring db..."
 wp config create \
