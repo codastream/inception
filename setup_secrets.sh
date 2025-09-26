@@ -22,10 +22,10 @@ create_secret_file() {
 }
 
 declare -a secrets=(
-	"sql_root_password",
-	"wp_admin_password",
-	"wp_user_password",
-	"wp_dp_user_password"
+	"sql_root_password"
+	"sql_user_password"
+	"wp_admin_password"
+	"wp_user_password"
 )
 
 for s in "${secrets[@]}"

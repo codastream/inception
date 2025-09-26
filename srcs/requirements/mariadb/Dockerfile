@@ -7,11 +7,13 @@ RUN apk add --no-cache\
     bash \
 	mariadb \
     mariadb-client \
-    vim sudo
+    mariadb-server-utils \
+    sudo
 
 # -S option for system groups and users
 RUN mkdir /run/mysqld \
-	&& chown -R mysql:mysql /var/lib/mysql /run/mysqld
+	&& chown -R mysql:mysql /var/lib/mysql /run/mysqld \
+    && chmod 755 /run/mysqld
 
 COPY tools/setup.sh /setup.sh
 COPY conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
@@ -19,9 +21,12 @@ COPY conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 RUN chmod +x /setup.sh
 
 # indicates where to persist data on container
+# should not be part of the writable layer
 VOLUME /var/lib/mysql
 
 EXPOSE 3306
+
+USER mysql
 
 ENTRYPOINT ["/setup.sh"]
 
