@@ -23,6 +23,7 @@ create_secret_file() {
 
 declare -a secrets=(
 	"sql_root_password"
+	"sql_admin_password"
 	"sql_user_password"
 	"wp_admin_password"
 	"wp_user_password"
