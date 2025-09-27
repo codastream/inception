@@ -8,12 +8,8 @@ RUN apk add --no-cache\
 	mariadb \
     mariadb-client \
     mariadb-server-utils \
+    su-exec \
     sudo
-
-# -S option for system groups and users
-RUN mkdir /run/mysqld \
-	&& chown -R mysql:mysql /var/lib/mysql /run/mysqld \
-    && chmod 755 /run/mysqld
 
 COPY tools/setup.sh /setup.sh
 COPY conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
@@ -28,5 +24,5 @@ EXPOSE 3306
 
 ENTRYPOINT ["/setup.sh"]
 
-CMD ["mariadbd-safe", "-F"]
+CMD ["mariadbd-safe", "--user=mysql"]
 

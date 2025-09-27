@@ -16,4 +16,4 @@ port = 3306
 #--- Loggings
 log_error = /var/lib/mysql/mariadb.err
 
-#user = mysql
+user = mysql
