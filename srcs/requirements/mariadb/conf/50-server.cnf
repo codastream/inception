@@ -1,6 +1,6 @@
 [mysqld]
 # storage for db files (mounted as a volume)
-datadir = /var/lib/mysql
+# datadir = /var/lib/mysql
 # socket = /run/mysqld/mysqld.sock
 
 #--- InnoDB storage engine

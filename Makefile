@@ -5,7 +5,7 @@ DATA				:=	/home/fpetit/data
 
 # targets
 
-all: secrets
+all: up
 
 secrets:
 	@./setup_secrets.sh
@@ -16,6 +16,7 @@ rm-secrets:
 	@echo "Secret files removed"
 
 directories:
+	@chmod +x setup_dirs.sh
 	@./setup_dirs.sh
 
 # -f compose file path
@@ -45,16 +46,29 @@ fclean: clean
 	rm -rf $DATA
 	@echo "Cleaning done"
 
+re-wp:
+	@docker compose -f $(COMPOSE_FILE) build --no-cache wordpress
+
+re-db:
+	@docker compose -f $(COMPOSE_FILE) build --no-cache mariadb
+
 re: fclean
+	@echo "Rebuilding Docker images without cache..."
+	@docker compose -f $(COMPOSE_FILE) build --no-cache
 	@make
 
 status:
 	@docker ps
 
 show:
+	# containers
+	docker ps -a --format "table {{.Names}}\t{{.Image}}\t{{.Status}}"
 	docker images
 	docker volume ls
 	docker network ls
+
+inspect-maria:
+	@docker inspect mariadb | grep -E "Image|Created"
 
 logs:
 	docker compose -f $(COMPOSE_FILE) logs

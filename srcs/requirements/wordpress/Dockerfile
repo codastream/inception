@@ -5,6 +5,7 @@ ARG WP_ARCHIVE=wordpress.tar.gz
 # mysql native driver
 # php data objects
 # opcache storing precompiled bytecode in memory
+# phar php archive
 # json required for REST API
 # mbstring multibyte string functions - for UTF-8
 # curl for updates and API calls
@@ -16,6 +17,7 @@ RUN apk add --no-cache php84 \
   php84-pdo \
   php84-pdo_mysql \
   php84-json \
+  php84-phar \
   php-mbstring \
   php84-curl \
   php84-gd \
@@ -25,8 +27,10 @@ RUN apk add --no-cache php84 \
 
 COPY tools/setup.sh /setup.sh
 
-RUN mkdir -p /usr/local/bin/wp \
-  && wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -P /usr/local/bin/wp \
+# symlink for php command used by cli
+RUN ln -sf /usr/bin/php84 /usr/bin/php \
+  && echo "memory_limit=512M" > /etc/php84/conf.d/memory-limit.ini \
+  && curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
   && chmod +x /usr/local/bin/wp \
   && mkdir -p /run/php \
   && chmod +x /setup.sh
