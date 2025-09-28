@@ -40,17 +40,30 @@ clean:
 # also cleans build cache
 # -a to clean tagged images
 fclean: clean
-	@echo "Cleaning system from all docker (..."
+	@echo "Cleaning system from all docker ..."
 	@docker system prune -af --volumes
 	@echo "Cleaning data..."
-	rm -rf $DATA
+	rm -rf $(DATA)
 	@echo "Cleaning done"
 
 re-wp:
 	@docker compose -f $(COMPOSE_FILE) build --no-cache wordpress
 
 re-db:
-	@docker compose -f $(COMPOSE_FILE) build --no-cache mariadb
+	@rm -rf $(DATA)/mariadb/*
+	@docker rm -f mariadb || true
+	@docker rmi -f mariadb || true
+	@docker volume rm -f mariadb || true
+	@docker build -t mariadb srcs/requirements/mariadb
+	@docker volume create mariadb
+	@docker run -d \
+		--name mariadb \
+		--network inception \
+		-v $(DATA)/mariadb:/var/lib/mysql \
+		-e SQL_ROOT_PASSWORD=rootpassword \
+		-e SQL_ADMIN_PASSWORD=adminpassword \
+		-e SQL_USER_PASSWORD=userpassword \
+		mariadb
 
 re: fclean
 	@echo "Rebuilding Docker images without cache..."

@@ -14,12 +14,12 @@ services:
     networks:
     - inception
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "mysql", "-h", "localhost", "-u", "$$SQL_USER", "-p$$SQL_USER_PASSWORD", "-e", "SELECT 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
+    #    healthcheck:
+    #  test: ["CMD", "mysql", "-h", "localhost", "-u", "$$SQL_USER", "-p$$SQL_USER_PASSWORD", "-e", "SELECT 1"]
+    #  interval: 30s
+    #  timeout: 5s
+    #  retries: 3
+    #  start_period: 10s
   wordpress:
     container_name: wordpress
     build:
@@ -59,6 +59,7 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+
 volumes:
   wordpress:
     name: wordpress
@@ -74,10 +75,12 @@ volumes:
       type: 'none'
       o: 'bind'
       device: '${DATA_DIR}/mariadb'
+
 networks:
   inception:
     name: inception
     driver: bridge
+
 secrets:
   wp_admin_password:
     file: ../secrets/wp_admin_password.txt

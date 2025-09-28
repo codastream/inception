@@ -1,12 +1,15 @@
+[client]
+socket = /run/mysqld/mysqld.sock
+
 [mysqld]
 # storage for db files (mounted as a volume)
-# datadir = /var/lib/mysql
-# socket = /run/mysqld/mysqld.sock
+datadir = /var/lib/mysql
+socket = /run/mysqld/mysqld.sock
 
 #--- InnoDB storage engine
 innodb_file_per_table = 1
-# memory buffer for cachung data and indexes
-innodb_buffer_pool_size = 64M
+# memory buffer for caching data and indexes
+innodb_buffer_pool_size = 128M
 
 #--- Networking
 # allow connections from other containers
@@ -16,4 +19,11 @@ port = 3306
 #--- Loggings
 log_error = /var/lib/mysql/mariadb.err
 
+#-- Security
 user = mysql
+
+#-- Chars
+#for emojis
+character-set-server   = utf8mb4
+collation-server       = utf8mb4_unicode_ci
+

@@ -17,9 +17,12 @@ declare -a dirs=(
 
 for d in "${dirs[@]}"
 do
+    echo "creating $DATA/$d and setting 755 perms"
     mkdir -p "$DATA/$d"
+    chmod 755 "$DATA/$d"
 done
 
 chown -R $(id -u):$(id -g) $DATA
+chown -R 999:999 "$DATA/mariadb"
 
 echo "=== End of directories setup ==="

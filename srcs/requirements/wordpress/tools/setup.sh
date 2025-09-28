@@ -4,7 +4,7 @@ WP_ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
 WP_USER_PASSWORD=$(cat /run/secrets/wp_user_password)
 SQL_USER_PASSWORD=$(cat /run/secrets/sql_user_password)
 
-WP_PATH="/var/www/html"
+WP_PATH="/var/www"
 WP_CONFIG="$WP_PATH/wp_config.php"
 
 echo "===Wordpress setup==="
