@@ -21,9 +21,9 @@ if [ -f "/run/secrets/sql_user_password" ]; then
     export SQL_USER_PASSWORD=$(cat /run/secrets/sql_user_password)
 fi
 
-echo $SQL_ROOT_PASSWORD
-echo $SQL_USER_PASSWORD
-echo $SQL_ADMIN_PASSWORD
+#echo $SQL_ROOT_PASSWORD
+#echo $SQL_USER_PASSWORD
+#echo $SQL_ADMIN_PASSWORD
 
 # if [ ! -d "/run/mysqld" ]; then
 #     mkdir -p /run/mysqld && chown -R mysql:mysql /run/mysqld;
@@ -95,9 +95,9 @@ if [ ! -d /var/lib/mysql/mysql ]; then
     # --socket=/run/mysqld/mysqld.sock & pid="$! << EOSQL
 
     #envsubst '$SQL_DATABASE $SQL_USER $SQL_ADMIN' < /etc/mysql/init.sql.template > /etc/mysql/init.sql
-    sed -i "s|_SQL_ROOT_PASSWORD_|$SQL_ROOT_PASSWORD|g" /etc/mysql/init.sql
-    sed -i "s|_SQL_ADMIN_PASSWORD_|$SQL_ADMIN_PASSWORD|g" /etc/mysql/init.sql
-    sed -i "s|_SQL_USER_PASSWORD_|$SQL_USER_PASSWORD|g" /etc/mysql/init.sql
+    # sed -i "s|_SQL_ROOT_PASSWORD_|$SQL_ROOT_PASSWORD|g" /etc/mysql/init.sql
+    # sed -i "s|_SQL_ADMIN_PASSWORD_|$SQL_ADMIN_PASSWORD|g" /etc/mysql/init.sql
+    # sed -i "s|_SQL_USER_PASSWORD_|$SQL_USER_PASSWORD|g" /etc/mysql/init.sql
     #cat /etc/mysql/init.sql
     #sed -i "s|skip-networking|# skip-networking|g" /etc/my.cnf.d/mariadb-server.cnf
     #sed -i "s|.*bind-address\s*=*|bind-address=0.0.0.0|g" /etc/my.cnf.d/mariadb-server.cnf

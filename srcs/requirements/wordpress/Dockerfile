@@ -20,7 +20,7 @@ RUN apk add --no-cache php84 \
   php84-json \
   php84-session \
   php84-phar \
-  php-mbstring \
+  php84-mbstring \
   php84-curl \
   php84-dom \
   php84-xml \
@@ -37,6 +37,7 @@ COPY tools/setup.sh /setup.sh
 # symlink for php command used by cli
 RUN ln -sf /usr/bin/php84 /usr/bin/php \
   && ln -sf /usr/sbin/php-fpm84 /usr/sbin/php-fpm \
+  && addgroup -S www && adduser -S -G www www
   && echo "memory_limit=512M" > /etc/php84/conf.d/memory-limit.ini \
   && curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
   && chmod +x /usr/local/bin/wp \
@@ -46,4 +47,4 @@ RUN ln -sf /usr/bin/php84 /usr/bin/php \
 ENTRYPOINT ["/setup.sh"]
 
 # -F foreground
-CMD ["/usr/sbin/php-fpm8.4", "-F"]
+CMD ["/usr/sbin/php-fpm84", "-F"]
