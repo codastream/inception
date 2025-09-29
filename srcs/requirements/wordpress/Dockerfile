@@ -37,11 +37,16 @@ COPY tools/setup.sh /setup.sh
 # symlink for php command used by cli
 RUN ln -sf /usr/bin/php84 /usr/bin/php \
   && ln -sf /usr/sbin/php-fpm84 /usr/sbin/php-fpm \
-  && addgroup -S www && adduser -S -G www www
+  && addgroup -S www && adduser -S -G www www \
   && echo "memory_limit=512M" > /etc/php84/conf.d/memory-limit.ini \
   && curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
   && chmod +x /usr/local/bin/wp \
-  && mkdir -p /run/php \
+  && mkdir -p /run/php84 \
+  && chmod +x /run/php84 \
+  && chown -R www:www /run/php84 \
+  && mkdir -p /var/www/wordpress \
+  && chown -R www:www /var/www/wordpress \
+  && chmod -R 755 /var/www/wordpress \
   && chmod +x /setup.sh
 
 ENTRYPOINT ["/setup.sh"]

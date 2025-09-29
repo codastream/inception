@@ -1,0 +1,19 @@
+Ma vie au pays des conteneurs
+
+Le conteneur est devant moi. C'est un conteneur de dimension standard, equivalent 20 pieds.
+On m'a dit que je devais en savoir plus sur eux. Je suis donc parti au port du Havre pour les observer de plus pres.
+Et je ne suis pas loin de franchir le saint des saints.
+Dans quelques instants je serai un initie.
+
+Le chemin a ete long et eprouvant. 
+Je reside a l'hotel des Bihan, un de ceux disponibles au catalogue VirtualBox. 
+La chambre n'etait pas bien meublee. Pas commode. J'ai du faire venir de nombreux paquets.
+Puis il a fallu composer avec le docker. Pas commode non plus.
+C'est lui qui dit si on peut voir ou pas les conteneurs.
+Et moi je voulais bien. Mais il a dit non. Dessine moi d'abord une image qu'il a dit.
+C'est une sorte de rituel dans le milieu, on peint les icones d'une sorte de trinite.
+La vierge, le typographe et le serveur.
+Les archetypes les plus anciens de l'humanite.
+Chacun son conteneur.
+J'ai peint l'icone de Sainte Maria des baies que le docker a lance.
+Le conteneur se trouve devant moi. J'avance.. Ce que je decouvre me laisse sans voix.

@@ -9,7 +9,7 @@ WP_CONFIG="$WP_PATH/wp-config.php"
 
 echo "===Wordpress setup==="
 
-mkdir -p "$WP_PATH"
+# mkdir -p "$WP_PATH"
 cd "$WP_PATH"
 
 if [ ! -f "$WP_PATH/wp-settings.php" ]; then
@@ -69,8 +69,8 @@ if ! wp theme is-active $WP_THEME; then
     wp theme install $WP_THEME --activate
 fi
 
-chown -R www:www "$WP_PATH"
-chmod -R 755 "$WP_PATH"
+# chown -R www:www "$WP_PATH"
+# chmod -R 755 "$WP_PATH"
 # ls /usr/sbin/
 
 exec "$@"
