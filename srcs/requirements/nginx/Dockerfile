@@ -7,16 +7,18 @@ ENV SETUP=setup.sh
 # creates directory /run/nginx for PID files and UNIX sockets used by fastCGI
 RUN apk add --no-cache nginx openssl curl vim sudo \
 	&& adduser -D -g 'www' www\
-	&& mkdir -p /var/www /run/nginx/ /etc/nginx/certs /var/lib/nginx/logs\
+	&& mkdir -p /var/www /run/nginx/ /etc/nginx/certs /etc/nginx/sites-enabled /etc/nginx/sites-available /var/lib/nginx/logs\
 	&& touch /var/lib/nginx/logs/error.log\
 	&& rm -f /etc/nginx/conf.d/*\
 	&& rm -f /etc/nginx/nginx.conf\
 	&& chown -R www:www /var/lib/nginx /var/lib/nginx/logs /var/lib/nginx/logs/error.log /run/nginx /etc/nginx/certs
 
+COPY conf/nginx.conf /etc/nginx/sites-available/default
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 COPY tools/${SETUP} ${SETUP}
 
-RUN chmod +x /${SETUP}
+RUN chmod +x /${SETUP} \
+	&& ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
 EXPOSE 443
 

@@ -11,6 +11,8 @@ fi
 
 chmod 600 /etc/nginx/certs/mycert.key
 
+nginx -t
+
 echo "Setup complete ... starting nginx ..."
 
 # execute final CMD

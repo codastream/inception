@@ -64,13 +64,29 @@ if [ -n "${WP_USER:-}" ] && [ -n "${WP_USER_EMAIL:-}" ]; then
         --allow-root
     fi
 fi
+
 if ! wp theme is-active $WP_THEME; then
     echo "Setting theme..."
     wp theme install $WP_THEME --activate
 fi
 
-# chown -R www:www "$WP_PATH"
-# chmod -R 755 "$WP_PATH"
+wp option update blogname $WP_TITLE
+wp option update blogdescription "400e build"
+POST_CONTENT=$(cat /etc/wordpress/post.txt)
+wp post update 1 \
+    --post_title="Ma vie au pays des conteneurs" \
+    --post_content="$POST_CONTENT" \
+    --allow-root\
+
+wp media import /etc/wordpress/docker.jpeg \
+  --title="Life in containers" \
+  --alt="Dockerized life" \
+  --post_id=1 \
+  --featured_image \
+  --allow-root
+
+chown -R www:www "$WP_PATH"
+chmod -R 755 "$WP_PATH"
 # ls /usr/sbin/
 
 exec "$@"
