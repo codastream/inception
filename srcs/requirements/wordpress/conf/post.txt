@@ -6,7 +6,7 @@ Et je ne suis pas loin de franchir le saint des saints.
 Dans quelques instants je serai un initie.
 
 Le chemin a ete long et eprouvant. 
-Je reside a l'hotel des Bihan, un de ceux disponibles au catalogue VirtualBox. 
+Je reside a l'hotel des Bihan, un de ceux disponibles au catalogue Virtual SmartBox. 
 La chambre n'etait pas bien meublee. Pas commode. J'ai du faire venir de nombreux paquets.
 Puis il a fallu composer avec le docker. Pas commode non plus.
 C'est lui qui dit si on peut voir ou pas les conteneurs.
@@ -16,4 +16,4 @@ La vierge, le typographe et le serveur.
 Les archetypes les plus anciens de l'humanite.
 Chacun son conteneur.
 J'ai peint l'icone de Sainte Maria des baies que le docker a lance.
-Le conteneur se trouve devant moi. J'avance.. Ce que je decouvre me laisse sans voix.
+Le conteneur se trouve devant moi. J'avance.. <a href="/?p=1">Ce que je decouvre</a> me laisse sans voix.

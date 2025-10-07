@@ -31,13 +31,16 @@ RUN apk add --no-cache php82 \
   php82-zip \
   bash \
   curl \
-  mariadb-client
+  mariadb-client \
+  && mkdir -p /var/www/wordpress
 
 COPY conf/php-fpm.conf /etc/php82/php-fpm.conf
 COPY conf/www.conf /etc/php82/php-fpm.d/www.conf
+COPY --chmod=644 tools/replacement.php /usr/local/bin/replacement.php
 COPY tools/setup.sh /setup.sh
 COPY --chmod=644 conf/post.txt /etc/wordpress/post.txt
 COPY --chmod=644 conf/docker.jpeg /etc/wordpress/docker.jpeg
+COPY --chmod=644 tools/favicon.ico /etc/wordpress/favicon.ico
 
 # symlink for php command used by cli
 RUN ln -sf /usr/bin/php82 /usr/bin/php \
@@ -49,7 +52,6 @@ RUN ln -sf /usr/bin/php82 /usr/bin/php \
   && mkdir -p /run/php82 \
   && chmod +x /run/php82 \
   && chown -R www:www /run/php82 \
-  && mkdir -p /var/www/wordpress \
   && chown -R www:www /var/www/wordpress \
   && chmod -R 755 /var/www/wordpress \
   && chmod +x /setup.sh

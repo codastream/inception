@@ -5,7 +5,7 @@ ENV SETUP=setup.sh
 # create user and group www
 # create directory for html files
 # creates directory /run/nginx for PID files and UNIX sockets used by fastCGI
-RUN apk add --no-cache nginx openssl curl vim sudo \
+RUN apk add --no-cache nginx openssl curl vim sudo netcat-openbsd \
 	&& adduser -D -g 'www' www\
 	&& mkdir -p /var/www /run/nginx/ /etc/nginx/certs /etc/nginx/sites-enabled /etc/nginx/sites-available /var/lib/nginx/logs\
 	&& touch /var/lib/nginx/logs/error.log\
