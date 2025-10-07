@@ -10,7 +10,9 @@ ARG WP_ARCHIVE=wordpress.tar.gz
 # mbstring multibyte string functions - for UTF-8
 # curl for updates and API calls
 # gd graphic library
+# tokenize for redis
 RUN apk add --no-cache php82 \
+  php82-cli \
   php82-curl \
   php82-dom \
   php82-exif \
@@ -27,6 +29,7 @@ RUN apk add --no-cache php82 \
   php82-pdo_mysql \
   php82-phar \
   php82-session \
+  php82-tokenizer \
   php82-xml \
   php82-zip \
   bash \

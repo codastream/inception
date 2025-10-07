@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -euo pipefail
+
 WP_ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
 WP_USER_PASSWORD=$(cat /run/secrets/wp_user_password)
 SQL_USER_PASSWORD=$(cat /run/secrets/sql_user_password)
@@ -52,6 +54,13 @@ if [ -f index.php ]; then
         --skip-email \
         --allow-root
     fi
+
+    # REDIS
+    wp config set WP_CACHE true --allow-root
+    wp config set WP_REDIS_HOST redis --type=constant --allow-root
+    wp config set WP_REDIS_PORT 6379 --type=constant --allow-root
+    wp config set WP_REDIS_TIMEOUT 1 --type=constant --allow-root
+    wp config set WP_REDIS_READ_TIMEOUT 1 --type=constant --allow-root
 
     if [ -n "${WP_USER:-}" ] && [ -n "${WP_USER_EMAIL:-}" ]; then
         if ! wp user get "$WP_USER_LOGIN" --path="$WP_PATH" --allow-root 2>/dev/null; then
@@ -110,6 +119,12 @@ PHP
     mkdir -p /var/www/wordpress/favicon
     install -m 644 /etc/wordpress/favicon.ico /var/www/wordpress/favicon/favicon.ico
 fi
+
+# redis 2
+wp plugin install redis-cache --activate --allow-root
+wp redis enable --allow-root
+wp config get WP_REDIS_HOST --type=constant --allow-root --path="$WP_PATH"
+wp redis status --allow-root --path="$WP_PATH"
 
 chown -R www:www "$WP_PATH"
 chmod -R 755 "$WP_PATH"
