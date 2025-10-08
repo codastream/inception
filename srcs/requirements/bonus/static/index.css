@@ -1,0 +1,53 @@
+body {
+  font-family: system-ui;
+  background: #f06d06;
+  color: white;
+  text-align: center;
+}
+
+#big {
+  display:flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.dyna {
+  color: #b2f600;
+}
+
+#pleasebox {
+  margin-top: 6em;
+  margin-bottom: 10em;
+}
+
+#please {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  border-radius: 3px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: #f06d06;
+  background: #b2f600;
+  border: 3px solid white;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  margin-bottom: 10em;
+}
+
+#please:hover {
+  background: white;
+  color: #f06d06;
+  border-color: #b2f600;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+#please:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
