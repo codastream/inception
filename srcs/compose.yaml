@@ -40,7 +40,6 @@ services:
     depends_on:
     - mariadb
     - redis
-    - ftpserver
     # - mariadb:
     #   condition: service_healthy
     # - redis:
@@ -60,8 +59,10 @@ services:
     depends_on:
     - wordpress
     - adminer
+    - staticsite
     ports:
     - "443:443"
+    - "80:80"
     # restart after crash
     restart: unless-stopped
     healthcheck:
@@ -103,10 +104,29 @@ services:
     - mariadb
     restart: unless-stopped
 
-    ftpserver:
+  ftpserver:
     container_name: ftpserver
     build:
       context: requirements/bonus/ftp
+      dockerfile: Dockerfile
+    env_file: .env
+    secrets:
+    - ftp_user_password
+    networks:
+    - inception
+    ports:
+    - "2121:21"
+    - "21000-21010:21000-21010"
+    volumes:
+    - wordpress:/var/www/wordpress
+    depends_on:
+    - wordpress
+    restart: unless-stopped
+
+  staticsite:
+    container_name: staticsite
+    build:
+      context: requirements/bonus/static
       dockerfile: Dockerfile
     env_file: .env
     networks:
@@ -128,6 +148,20 @@ volumes:
       type: 'none'
       o: 'bind'
       device: '${DATA_DIR}/mariadb'
+  adminer:
+    name: adminer
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR}/adminer
+  redis:
+    name: redis
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR}/redis
 
 networks:
   inception:
