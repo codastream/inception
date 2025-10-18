@@ -28,6 +28,7 @@ declare -a secrets=(
 	"wp_admin_password"
 	"wp_user_password"
 	"redis_password"
+	"ftp_user_password"
 )
 
 for s in "${secrets[@]}"

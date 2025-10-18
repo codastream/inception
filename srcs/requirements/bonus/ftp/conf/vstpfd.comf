@@ -1,0 +1,59 @@
+### security
+anonymous_enable=NO
+# allow system users (/etc/passwd) to log in - necessary if we create dedicated user
+local_enable=YES
+# uploads, delete, rename
+write_enable=YES
+# default file permissions 755 for dir 644 for files
+local_umask=022
+# turns off Linux syscall sandbox - can cause crash in containers
+seccomp_sandbox=NO
+# mask UID/GID in directories - privacy setting
+hide_ids=YES
+userlist_enable=YES
+userlist_file=/etc/vsftpd.userlist
+userlist_deny=NO
+max_clients=5
+max_per_ip=2
+
+### user isolation
+# every user in their home dir
+chroot_local_user=YES
+allow_writeable_chroot=YES
+# override home dir for wp uploads
+local_root=/var/www/wordpress
+download_enable=YES
+
+### upload
+file_open_mode=0644
+anon_upload_enable=NO
+anon_mkdir_write_enable=NO
+
+### port
+# not via inetd (unix daemon)
+listen=YES
+listen_ipv6=NO
+
+### passive
+# necessary for Docker
+pasv_enable=YES
+pasv_min_port=21000
+pasv_max_port=21010
+
+### logs
+xferlog_enable=YES
+log_ftp_protocol=YES
+vsftpd_log_file=/var/log/vsftpd/vsftpd.log
+xferlog_file=/var/log/vsftpd/xferlog
+
+### messages
+# show .message file contents
+dirmessage_enable=YES
+ftpd_banner=FTP Server for Wordpress
+
+### timeouts
+idle_session_timeout=300
+data_connection_timeout=120
+
+connect_from_port_20=YES
+
