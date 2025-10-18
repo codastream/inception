@@ -32,6 +32,7 @@ services:
     - wp_admin_password
     - wp_user_password
     - sql_user_password
+    - redis_password
     volumes:
     - wordpress:/var/www/wordpress
     networks:
@@ -39,6 +40,10 @@ services:
     depends_on:
     - mariadb
     - redis
+    # - mariadb:
+    #   condition: service_healthy
+    # - redis:
+    #   condition: service_healthy
     restart: unless-stopped
 
   nginx:
@@ -70,10 +75,20 @@ services:
     build:
       context: requirements/bonus/redis
       dockerfile: Dockerfile
+    # cap_add:
+    # - SETGID
+    # - SETUID
     env_file: .env
+    secrets:
+    - redis_password
     networks:
     - inception
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   adminer:
     container_name: adminer
@@ -119,3 +134,5 @@ secrets:
     file: ../secrets/sql_user_password.txt
   sql_root_password:
     file: ../secrets/sql_root_password.txt
+  redis_password:
+    file: ../secrets/redis_password.txt
