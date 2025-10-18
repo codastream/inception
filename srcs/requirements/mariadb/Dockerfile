@@ -33,5 +33,8 @@ ENTRYPOINT ["sh", "/setup.sh"]
 
 CMD [ "/usr/bin/mariadbd-safe", "--datadir=/var/lib/mysql", "--user=mysql"]
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD mariadb-admin ping -u root || exit 1
+HEALTHCHECK --interval=30s\
+            --timeout=5s\
+            --start-period=30s\
+            --retries=3 \
+            CMD mariadb-admin ping -h 127.0.0.1 -u root -p "$(cat /run/secrets/sql_root_password)" || exit 1

@@ -14,12 +14,12 @@ services:
     networks:
     - inception
     restart: unless-stopped
-    #    healthcheck:
-    #  test: ["CMD", "mysql", "-h", "localhost", "-u", "$$SQL_USER", "-p$$SQL_USER_PASSWORD", "-e", "SELECT 1"]
-    #  interval: 30s
-    #  timeout: 5s
-    #  retries: 3
-    #  start_period: 10s
+       healthcheck:
+     test: ["CMD", "mysql", "-h", "localhost", "-u", "$$SQL_USER", "-p$$SQL_USER_PASSWORD", "-e", "SELECT 1"]
+     interval: 30s
+     timeout: 5s
+     retries: 3
+     start_period: 10s
   wordpress:
     container_name: wordpress
     build:
@@ -50,6 +50,7 @@ services:
     - inception
     depends_on:
     - wordpress
+    - adminer
     ports:
     - "443:443"
     # restart after crash
