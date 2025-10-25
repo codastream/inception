@@ -59,7 +59,7 @@ services:
     depends_on:
     - wordpress
     - adminer
-    - staticsite
+    # - staticsite
     ports:
     - "443:443"
     - "80:80"
@@ -128,6 +128,8 @@ services:
     build:
       context: requirements/bonus/static
       dockerfile: Dockerfile
+    # volumes:
+    # - wordpress:/var/www/wordpress
     env_file: .env
     networks:
     - inception

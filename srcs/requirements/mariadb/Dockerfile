@@ -23,7 +23,7 @@ RUN chmod +x /setup.sh
 
 # indicates where to persist data on container
 # should not be part of the writable layer
-VOLUME /var/lib/mysql
+# VOLUME /var/lib/mysql
 
 EXPOSE 3306
 

@@ -5,6 +5,9 @@
 # -o pipefail error if an intermediate command fails in a pipe
 set -euo pipefail
 
+chown -R mysql:mysql /var/lib/mysql
+chmod 770 /var/lib/mysql
+
 # SQL_ROOT_PASSWORD="rootpassword"
 # SQL_ADMIN_PASSWORD="adminpassword"
 # SQL_USER_PASSWORD="userpassword"
