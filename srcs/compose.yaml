@@ -120,7 +120,28 @@ services:
     volumes:
     - wordpress:/var/www/wordpress
     depends_on:
-    - wordpress
+    - nginx
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "21"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+
+  portainer:
+    container_name: portainer
+    build:
+      context: requirements/bonus/portainer
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+    - portainer:/data
+    - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+    - "9443:9443"
+    networks:
+    - inception
     restart: unless-stopped
 
   staticsite:
@@ -128,8 +149,6 @@ services:
     build:
       context: requirements/bonus/static
       dockerfile: Dockerfile
-    # volumes:
-    # - wordpress:/var/www/wordpress
     env_file: .env
     networks:
     - inception
@@ -164,6 +183,13 @@ volumes:
       type: none
       o: bind
       device: ${DATA_DIR}/redis
+  portainer:
+    name: portainer
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR}/portainer
 
 networks:
   inception:

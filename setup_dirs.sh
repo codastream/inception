@@ -13,6 +13,7 @@ declare -a dirs=(
     "nginx"
     "redis"
     "wordpress"
+    "portainer"
 )
 
 for d in "${dirs[@]}"
