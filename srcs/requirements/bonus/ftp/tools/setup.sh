@@ -1,32 +1,35 @@
 #!/bin/sh
 
-set -euo pipefail
+FTP_USER_HOME="/var/www/wordpress/"
 
-service vsftpd start
+set -euxo pipefail
 
 FTP_PASS=$(cat /run/secrets/ftp_user_password)
 
-id ftpsecure || echo "ftpsecure missing"
+mkdir -p /var/log/vsftpd /etc/vsftpd /var/www/wordpress/wp-content/uploads
 
-# ensure ftp user exists
-# if ! id "$FTP_USER" > /dev/null 2>&1; then
-#     echo "ERROR: user $FTP_USER missing; image must create it." >&2
-#     exit 1
-# fi
+# adding www  user and group
+if ! getent group www >/dev/null 2>&1; then
+  groupadd -g 1001    -r www
+fi
+if ! getent passwd www >/dev/null 2>&1; then
+  useradd  -u 1001    -r -g www -d /var/www               -s /sbin/nologin www
+fi
 
-# ensure ftp user is in www group
-# if ! id -nG "$FTP_USER" | grep -qw www; then
-#   adduser "$FTP_USER" 1001 || true
-# fi
+# adding secure user for vsftpd
+if ! getent passwd ftpsecure >/dev/null 2>&1; then
+  useradd  -u 998     -r -g www -d /var/empty             -s /sbin/nologin -M ftpsecure
+fi
 
+# addding FTP user with a fixed UID/GID to avoid permission issues with wordpress files
+if ! getent passwd ftpuser >/dev/null 2>&1; then
+  useradd  -u 999     -r -g www -d $FTP_USER_HOME         -s /sbin/nologin -m ftpuser
+  echo "$FTP_USER:$FTP_PASS" | chpasswd
+fi
 
-# chown -R "$FTP_USER":"$FTP_USER" /home/vsftpd
-
-echo "$FTP_USER:$FTP_PASS" | chpasswd
-
-if [ ! -f /etc/vsftpd.user_list ]; then
-  echo "$FTP_USER" > /etc/vsftpd.user_list
-  chmod 644 /etc/vsftpd.user_list
+if [ ! -f /etc/vsftpd/vsftpd.user_list ]; then
+  echo "$FTP_USER" | tee -a /etc/vsftpd/vsftpd.user_list
+  chmod 644 /etc/vsftpd/vsftpd.user_list
 fi
 
 until [ -d "/var/www/wordpress/wp-content" ] && [ -f "/var/www/wordpress/wp-config.php" ]; do
@@ -34,41 +37,13 @@ until [ -d "/var/www/wordpress/wp-content" ] && [ -f "/var/www/wordpress/wp-conf
   sleep 2
 done
 
-set -eux
+# Set ownership for WordPress files
+chown -R www:www /var/www/wordpress
+chmod -R 755 /var/www/wordpress
 
-# ensure group exist
-# getent group www >/dev/null || addgroup -S www
-# id -u www >/dev/null 2>&1 || adduser -S -D -G www -h /var/www -s /sbin/nologin www
-# adduser "$FTP_USER" www || true
-
-# create ftp directory for chroot
-mkdir -p /home/vsftpd/ftpsecure
-chown nobody:nogroup /home/vsftpd/ftpsecure
-chmod a-w /home/vsftpd/ftpsecure
-ls -la /home/vsftpd/ftpsecure
-
-mkdir -p /home/vsftpd/ftpsecure/files
-chown "$FTP_USER":"$FTP_USER" /home/vsftpd/ftpsecure/files
-chmod 755 /home/vsftpd/ftpsecure/files
-ls -la /home/vsftpd/ftpsecure/files
-
-
-mkdir -p /var/www/wordpress/wp-content/uploads
-
-# ensure ftp user owns wordpress files
-chown -R www:www /var/www/wordpress/wp-content/uploads
-# gid bit 2 set so new files inherit group
-
-find /var/www/wordpress/wp-content/uploads -type d -exec chmod 2775 {} +
-chmod -R g+rw /var/www/wordpress/wp-content/uploads
-
-# debug
-ls -ld /var/www/wordpress/wp-content/uploads \
-       /var/www/wordpress/wp-content/uploads/2025 \
-       /var/www/wordpress/wp-content/uploads/2025/10 || true
-id "$FTP_USER" || true
-
-service vsftpd stop
+# Allow FTP user to write to wp-content/uploads
+chown -R ftpuser:www /var/www/wordpress/wp-content/uploads
+chmod -R 775 /var/www/wordpress/wp-content/uploads
 
 echo "Running"
 

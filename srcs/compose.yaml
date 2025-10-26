@@ -120,7 +120,7 @@ services:
     - "20:20"
     - "21000-21010:21000-21010"
     volumes:
-    - wordpress:/home/ftpuser/ftp
+    - wordpress:/var/www/wordpress
     depends_on:
     - nginx
     restart: unless-stopped
