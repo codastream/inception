@@ -10,20 +10,20 @@ mkdir -p /var/log/vsftpd /etc/vsftpd /var/www/wordpress/wp-content/uploads
 
 # adding www  user and group
 if ! getent group www >/dev/null 2>&1; then
-  groupadd -g 1001    -r www
+  addgroup -g 1001    www
 fi
 if ! getent passwd www >/dev/null 2>&1; then
-  useradd  -u 1001    -r -g www -d /var/www               -s /sbin/nologin www
+  adduser  -u 1001    -D -G www -h /var/www               -s /sbin/nologin www
 fi
 
 # adding secure user for vsftpd
 if ! getent passwd ftpsecure >/dev/null 2>&1; then
-  useradd  -u 998     -r -g www -d /var/empty             -s /sbin/nologin -M ftpsecure
+  adduser  -u 998     -D -G www -h /var/empty             -s /sbin/nologin -H ftpsecure
 fi
 
 # addding FTP user with a fixed UID/GID to avoid permission issues with wordpress files
 if ! getent passwd ftpuser >/dev/null 2>&1; then
-  useradd  -u 999     -r -g www -d $FTP_USER_HOME         -s /sbin/nologin -m ftpuser
+  adduser  -u 999     -D -G www -h $FTP_USER_HOME         -s /sbin/nologin ftpuser
   echo "$FTP_USER:$FTP_PASS" | chpasswd
 fi
 
@@ -47,4 +47,4 @@ chmod -R 775 /var/www/wordpress/wp-content/uploads
 
 echo "Running"
 
-exec "$@"
+exec /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
