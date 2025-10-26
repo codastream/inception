@@ -10,6 +10,4 @@ else
     echo "Warning: No Redis password secret"
 fi
 
-# exec $"@"
-
 exec su-exec redis redis-server /etc/redis/redis.conf
