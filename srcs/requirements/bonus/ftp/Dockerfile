@@ -1,21 +1,17 @@
 FROM alpine:3.21
 
-ARG FTP_USER
-ARG FTP_UID=1002
-ARG WWW_UID=1001
-ARG WWW_GID=1001
-
-ENV FTP_USER="${FTP_USER}"
-
 # shadow includes usermod
 RUN apk add --no-cache vsftpd shadow
 
-# -D default no password
-# -h sets home to /var/www
-RUN mkdir -p /home/vsftpd /var/log/vsftpd /etc/vsftpd \
-    && addgroup -g "${WWW_GID}" -S www \
-    && adduser -u "${WWW_UID}" -D -G www -h /var/www -s /sbin/nologin www \
-    && adduser -D -u "${FTP_UID}" -G www -h "/home/vsftpd/ftpuser" -s /sbin/nologin ftpuser
+# -r creates system account
+# -d specifies home dir
+# -m creates home dir
+# -M prevents home dir creation
+RUN mkdir -p /home/vsftpd/ftpuser /var/log/vsftpd /etc/vsftpd /var/www/wordpress/wp-content/uploads
+RUN groupadd -g 1001    -r www
+RUN useradd  -u 1001    -r -g www -d /var/www               -s /sbin/nologin www
+RUN useradd  -u 998     -r -g www -d /var/empty             -s /sbin/nologin -M ftpsecure
+RUN useradd  -u 999     -r -g www -d /home/vsftpd/ftpuser   -s /sbin/nologin -m ftpuser
 
 COPY tools/setup.sh /usr/sbin/setup.sh
 COPY conf/vsftpd.conf /etc/vsftpd/vsftpd.conf

@@ -114,8 +114,17 @@ PHP
     install -m 644 /etc/wordpress/favicon.ico /var/www/wordpress/favicon/favicon.ico
 fi
 
-chown -R www:www "$WP_PATH"
-chmod -R 755 "$WP_PATH"
+# ensure uploads dir exists
+mkdir -p /var/www/wordpress/wp-content/uploads
+
+chgrp -R www "$WP_PATH"
+
+# ensure www group owns uploads
+find /var/www/wordpress/wp-content/uploads -type d -exec chmod 2775 {} +
+find /var/www/wordpress/wp-content/uploads -type f -exec chmod 664 {} +
+find /var/www/wordpress/wp-content/uploads -type d -exec chmod 775 {} +
+
+# chmod -R 755 "$WP_PATH"
 # ls /usr/sbin/
 
 until nc -z "redis" "6379"; do

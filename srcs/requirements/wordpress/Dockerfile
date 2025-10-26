@@ -48,16 +48,19 @@ COPY --chmod=644 tools/favicon.ico /etc/wordpress/favicon.ico
 # symlink for php command used by cli
 RUN ln -sf /usr/bin/php82 /usr/bin/php \
   && ln -sf /usr/sbin/php-fpm82 /usr/sbin/php-fpm \
-  && addgroup -S www && adduser -S -G www www \
+  && addgroup -g 1001 -S www \
+  && adduser -u 1001 -S -G www -h /var/www -s /sbin/nologin www \
   && echo "memory_limit=512M" > /etc/php82/conf.d/memory-limit.ini \
   && curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
   && chmod +x /usr/local/bin/wp \
   && mkdir -p /run/php82 \
   && chmod +x /run/php82 \
   && chown -R www:www /run/php82 \
-  && chown -R www:www /var/www/wordpress \
-  && chmod -R 755 /var/www/wordpress \
   && chmod +x /setup.sh
+
+# Ensure php-fpm pool runs as www:www
+RUN sed -ri 's|^user\s*=.*$|user = www|' /etc/php82/php-fpm.d/www.conf \
+ && sed -ri 's|^group\s*=.*$|group = www|' /etc/php82/php-fpm.d/www.conf
 
 ENTRYPOINT ["/setup.sh"]
 

@@ -117,9 +117,10 @@ services:
     - inception
     ports:
     - "2121:21"
+    - "20:20"
     - "21000-21010:21000-21010"
     volumes:
-    - wordpress:/var/www/wordpress
+    - wordpress:/home/ftpuser/ftp
     depends_on:
     - nginx
     restart: unless-stopped
@@ -129,7 +130,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-
 
   portainer:
     container_name: portainer

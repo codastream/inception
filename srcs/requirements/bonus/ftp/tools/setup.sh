@@ -2,24 +2,25 @@
 
 set -euo pipefail
 
+service vsftpd start
+
 FTP_PASS=$(cat /run/secrets/ftp_user_password)
 
+id ftpsecure || echo "ftpsecure missing"
+
 # ensure ftp user exists
-if ! id "$FTP_USER" > /dev/null 2>&1; then
-    echo "ERROR: user $FTP_USER missing; image must create it." >&2
-    exit 1
-fi
+# if ! id "$FTP_USER" > /dev/null 2>&1; then
+#     echo "ERROR: user $FTP_USER missing; image must create it." >&2
+#     exit 1
+# fi
+
 # ensure ftp user is in www group
-if ! id -nG "$FTP_USER" | grep -qw www; then
-  adduser "$FTP_USER" www || true
-fi
+# if ! id -nG "$FTP_USER" | grep -qw www; then
+#   adduser "$FTP_USER" 1001 || true
+# fi
+
 
 # chown -R "$FTP_USER":"$FTP_USER" /home/vsftpd
-
-if ! id -nG "$FTP_USER" | grep -qw www; then
-  adduser "$FTP_USER" www || true
-fi
-
 
 echo "$FTP_USER:$FTP_PASS" | chpasswd
 
@@ -36,9 +37,20 @@ done
 set -eux
 
 # ensure group exist
-getent group www >/dev/null || addgroup -S www
-id -u www >/dev/null 2>&1 || adduser -S -D -G www -h /var/www -s /sbin/nologin www
-adduser "$FTP_USER" www || true
+# getent group www >/dev/null || addgroup -S www
+# id -u www >/dev/null 2>&1 || adduser -S -D -G www -h /var/www -s /sbin/nologin www
+# adduser "$FTP_USER" www || true
+
+# create ftp directory for chroot
+mkdir -p /home/vsftpd/ftpsecure
+chown nobody:nogroup /home/vsftpd/ftpsecure
+chmod a-w /home/vsftpd/ftpsecure
+ls -la /home/vsftpd/ftpsecure
+
+mkdir -p /home/vsftpd/ftpsecure/files
+chown "$FTP_USER":"$FTP_USER" /home/vsftpd/ftpsecure/files
+chmod 755 /home/vsftpd/ftpsecure/files
+ls -la /home/vsftpd/ftpsecure/files
 
 
 mkdir -p /var/www/wordpress/wp-content/uploads
@@ -55,6 +67,8 @@ ls -ld /var/www/wordpress/wp-content/uploads \
        /var/www/wordpress/wp-content/uploads/2025 \
        /var/www/wordpress/wp-content/uploads/2025/10 || true
 id "$FTP_USER" || true
+
+service vsftpd stop
 
 echo "Running"
 
