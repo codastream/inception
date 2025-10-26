@@ -116,7 +116,7 @@ services:
     networks:
     - inception
     ports:
-    - "2121:21"
+    - "2121:2121"
     - "20:20"
     - "21000-21010:21000-21010"
     volumes:

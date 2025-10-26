@@ -4,8 +4,11 @@ set -euxo pipefail
 FTP_PASS=$(cat /run/secrets/ftp_user_password)
 FTP_USER=ftpuser
 
-# crate secure chroot directory
+# create secure chroot directory
 mkdir -p /var/run/vsftpd/empty
+chown root:root /var/run/vsftpd/empty
+chmod 555 /var/run/vsftpd/empty
+
 mkdir -p /var/log/vsftpd/
 
 until [ -d "/var/www/wordpress/wp-content" ] && [ -f "/var/www/wordpress/wp-config.php" ]; do
@@ -22,7 +25,6 @@ if [ ! -f "/etc/vsftpd.conf.bak" ]; then
 
   mkdir -p /var/run/vsftpd/empty
 	cp /etc/vsftpd.conf /etc/vsftpd.conf.bak
-	mv /var/www/vsftpd.conf /etc/vsftpd.conf
 
 	adduser --disabled-password --gecos "" \
           --home /var/www/wordpress/wp-content/uploads \
@@ -30,16 +32,18 @@ if [ ! -f "/etc/vsftpd.conf.bak" ]; then
           --ingroup www \
           $FTP_USER 
 
-	echo "$FTP_USER:$FTP_PASS" | /usr/sbin/chpasswd &> /dev/null
-
-	chown -R $FTP_USER:www /var/www/wordpress/wp-content/uploads
-  chmod -R 2775 /var/www/wordpress/wp-content/uploads
-
-	echo $FTP_USER >> /etc/vsftpd.userlist
-
 fi
 
+echo "$FTP_USER:$FTP_PASS" | /usr/sbin/chpasswd &> /dev/null
 
+chown -R $FTP_USER:www /var/www/wordpress/wp-content/uploads
+chmod -R 2775 /var/www/wordpress/wp-content/uploads
+
+touch /etc/vsftpd.userlist
+echo $FTP_USER | tee -a /etc/vsftpd.userlist &> /dev/null
+grep -qxF "$FTP_USER" /etc/vsftpd.userlist || echo "$FTP_USER" >> /etc/vsftpd.userlist
+chown root:root /etc/vsftpd.userlist
+chmod 644 /etc/vsftpd.userlist
 
 # # Create www user with UID 1001 if it doesn't exist
 # if ! id -u www > /dev/null 2>&1; then
@@ -80,4 +84,4 @@ fi
 # xferlog_file=/var/log/vsftpd/xferlog
 # userlist_file=/etc/vsftpd.userlist" >> /etc/vsftpd.conf
 
-exec /usr/sbin/vsftpd /etc/vsftpd.conf
+exec /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
