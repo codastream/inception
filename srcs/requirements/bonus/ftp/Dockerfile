@@ -3,7 +3,9 @@ FROM debian:bookworm
 RUN apt update -y \
     && apt install vsftpd -y
 
-COPY ./tools/script.sh /
-RUN chmod +x /script.sh
+COPY ./tools/setup.sh /
+COPY conf/vsftpd.conf /etc/vsftpd/vsftpd.conf
 
-CMD ["/script.sh"]
+RUN chmod +x /setup.sh
+
+CMD ["bash", "/setup.sh"]
