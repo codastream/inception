@@ -1,14 +1,41 @@
-# defs
+# /////////////// defs
 
 COMPOSE_FILE		:=	./srcs/compose.yaml
 DATA				:=	/home/fpetit/data
 
-# targets
+# /////////////// targets
 
 all: up
 
+# -f compose file path
+# -d detached mode
+up: directories
+	@echo "Starting Docker containers..."
+	@docker compose -f $(COMPOSE_FILE) up -d
+	@echo "✅ Containers ready"
+
+down:
+	@echo "Stopping Docker containers..."
+	@docker compose -f $(COMPOSE_FILE) down
+	@echo "Containers stopped"
+
+clean:
+	@echo "Cleaning Docker containers, project images, volumes and networks..."
+	@docker compose -f $(COMPOSE_FILE) down -v --rmi all
+
+# cleans containers, networks, images, volumes
+# also cleans build cache
+# -a to clean tagged images
+fclean: clean
+	@echo "Cleaning all Docker resources..."
+	@docker system prune -af --volumes
+	@echo "Cleaning data..."
+	@sudo rm -rf $(DATA)
+	@echo "Cleaning done"
+
 secrets:
-	@./setup_secrets.sh
+	@chmod +x setup_secrets.sh
+	@sudo ./setup_secrets.sh
 
 rm-secrets:
 	@echo "Removing secret files"
@@ -17,61 +44,24 @@ rm-secrets:
 
 directories:
 	@chmod +x setup_dirs.sh
-	@./setup_dirs.sh
-
-# -f compose file path
-# -d detached mode
-up: directories
-	@echo "Starting Docker compose..."
-	@docker compose -f $(COMPOSE_FILE) up
-	@echo "Containers ready"
-
-down:
-	@echo "Stopping Docker compose..."
-	@docker compose -f $(COMPOSE_FILE) down
-	@echo "Containers stopped"
-
-# clean project
-clean:
-	@echo "Cleaning Docker compose..."
-	@docker compose -f $(COMPOSE_FILE) down -v --rmi all
-
-# cleans containers, networks, images, volumes
-# also cleans build cache
-# -a to clean tagged images
-fclean: clean
-	@echo "Cleaning system from all docker ..."
-	@docker system prune -af --volumes
-	@echo "Cleaning data..."
-	rm -rf $(DATA)
-	@echo "Cleaning done"
+	@sudo ./setup_dirs.sh
 
 re-wp:
+	@echo "Rebuildig and restarting Wordpress..."
 	@docker compose -f $(COMPOSE_FILE) build --no-cache wordpress
+	@docker compose -f $(COMPOSE_FILE) up -d wordpress
+	@echo "Wordpress restarted"
 
 re-db:
-	@rm -rf $(DATA)/mariadb/*
-	@docker rm -f mariadb || true
-	@docker rmi -f mariadb || true
-	@docker volume rm -f mariadb || true
-	@docker build -t mariadb srcs/requirements/mariadb
-	@docker volume create mariadb
-	@docker run -d \
-		--name mariadb \
-		--network inception \
-		-v $(DATA)/mariadb:/var/lib/mysql \
-		-e SQL_ROOT_PASSWORD=rootpassword \
-		-e SQL_ADMIN_PASSWORD=adminpassword \
-		-e SQL_USER_PASSWORD=userpassword \
-		mariadb
+	@echo "Rebuilding and restarting MariaDB without cache..."
+	@docker compose -f $(COMPOSE_FILE) build --no-cache mariadb
+	@docker compose -f $(COMPOSE_FILE) up -d mariadb
+	@echo "MariaDB restarted"
 
 re: fclean
-	@echo "Rebuilding Docker images without cache..."
+	@echo "Rebuilding and restarting all images"
 	@docker compose -f $(COMPOSE_FILE) build --no-cache
-	@make
-
-status:
-	@docker ps
+	@$(MAKE) up
 
 show:
 	# containers
@@ -80,11 +70,11 @@ show:
 	docker volume ls
 	docker network ls
 
-inspect-maria:
-	@docker inspect mariadb | grep -E "Image|Created"
-
 logs:
 	docker compose -f $(COMPOSE_FILE) logs
+
+test-db:
+	@docker exec -it mariadb mysql -u root -p"$$(cat secrets/sql_root_password.txt)" -e "SHOW DATABASES;"
 
 sh-nginx:
 	@docker exec -it nginx sh
@@ -95,5 +85,5 @@ sh-maria:
 sh-wp:
 	@docker exec -it wordpress sh
 
-.PHONY: secrets rm-secrets directories up down stop start clean fclean re status show logs sh-nginx sh-maria sh-wp
+.PHONY: up down clean fclean re status show logs test-db sh-nginx sh-maria sh-wp secrets rm-secrets directories
 

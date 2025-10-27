@@ -4,13 +4,12 @@ FROM alpine:3.21
 # shadow for user management ontop of Alpine busybox adduser / addgroup
 # vim and sudo for debug
 RUN apk add --no-cache\
-    bash \
 	mariadb \
     mariadb-client \
     mariadb-server-utils \
+    bash \
     su-exec \
     gettext \
-    sudo \
     && rm -f /etc/my.cnf.d/* \
     && chown -R mysql:mysql /var/lib/mysql \
     && mkdir -p /run/mysqld && chown -R mysql:mysql /run/mysqld
@@ -21,20 +20,8 @@ COPY conf/50-server.cnf /etc/my.cnf.d/
 
 RUN chmod +x /setup.sh
 
-# indicates where to persist data on container
-# should not be part of the writable layer
-# VOLUME /var/lib/mysql
-
-EXPOSE 3306
-
 WORKDIR /usr
 
 ENTRYPOINT ["sh", "/setup.sh"]
 
 CMD [ "/usr/bin/mariadbd-safe", "--datadir=/var/lib/mysql", "--user=mysql"]
-
-HEALTHCHECK --interval=30s\
-            --timeout=5s\
-            --start-period=30s\
-            --retries=3 \
-            CMD mariadb-admin ping -h 127.0.0.1 -u root -p "$(cat /run/secrets/sql_root_password)" || exit 1

@@ -21,8 +21,6 @@ COPY tools/${SETUP} ${SETUP}
 RUN chmod +x /${SETUP} \
 	&& ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
-EXPOSE 443
-
 # prevents container to run as root
 USER www
 

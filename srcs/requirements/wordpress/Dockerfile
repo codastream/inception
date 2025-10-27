@@ -32,7 +32,6 @@ RUN apk add --no-cache php82 \
   php82-tokenizer \
   php82-xml \
   php82-zip \
-  bash \
   curl \
   mariadb-client \
   && mkdir -p /var/www/wordpress
