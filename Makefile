@@ -60,6 +60,7 @@ re-db:
 
 re: fclean
 	@echo "Rebuilding and restarting all images"
+	@$(MAKE) directories
 	@docker compose -f $(COMPOSE_FILE) build --no-cache
 	@$(MAKE) up
 
