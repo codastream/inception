@@ -9,7 +9,7 @@ all: up
 
 # -f compose file path
 # -d detached mode
-up: directories
+up:
 	@echo "Starting Docker containers..."
 	@docker compose -f $(COMPOSE_FILE) up -d
 	@echo "✅ Containers ready"
